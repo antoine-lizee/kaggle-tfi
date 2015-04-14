@@ -2,6 +2,8 @@
 # 2015-04-13 Thomas Legrand
 
 library(randomForest)
+source("Scripts/preprocessing.R")
+source("Scripts/helpers.R")
 
 train <- read.csv('Data/train.csv')
 test <- read.csv('Data/test.csv')
@@ -34,10 +36,18 @@ names(test)
 summary(train)
 summary(test)
 
+Xtrain <- train[,-which(names(train) %in% c("revenue"))]
+Ytrain <- train["revenue"]
 
-# Features ideas
-# Time since restaurant open
-train$Open.Date <- as.Date(train$Open.Date, format = "%m/%d/%Y")
+Xtest <- test
 
-# time since open
+XtrainProcessed <- preprocess(Xtrain)
+XtestProcessed <- preprocess(Xtest)
 
+model <- randomForest(XtrainProcessed, Ytrain[,1])
+result <- predict(model, XtestProcessed)
+
+#model1 <- step(lm(revenue ~ ., data.frame(XtrainProcessed, Ytrain)), trace = 0)
+#result2 <- predict(model1, XtestProcessed)
+
+writeSubmission(Xtest, result, "mySubmission")

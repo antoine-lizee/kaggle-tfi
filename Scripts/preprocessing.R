@@ -8,23 +8,21 @@ preproc <- function(X){
   age <- as.numeric(Sys.Date() - X$Open.Date, units = "days")
   isFCType <- factor(X$Type == "FC")
   isILType <- factor(X$Type == "IL")
-  ofuscated.names <- paste0("P", seq(1,37))
-  ofuscated <- X[, colnames(X) %in% ofuscated.names]
-  ofuscated[ofuscated == 0] <- NA
-  imp <- mice(ofuscated, seed = 2015, m = 1, maxit = 3, method = "mean")
-  ofuscated <- complete(imp)
-  log.ofuscated <- lapply(ofuscated, function(x) log(x+1))
+  obfuscated.names <- paste0("P", seq(1,37))
+  obfuscated <- X[, colnames(X) %in% obfuscated.names]
+  obfuscated[obfuscated == 0] <- NA
+  imp <- mice(obfuscated, seed = 2015, m = 1, maxit = 3, method = "mean")
+  obfuscated <- complete(imp)
+  log.obfuscated <- lapply(obfuscated, function(x) log(x+1))
   city.group <- factor(X$City.Group)
   return(data.frame(age, 
                     city.group, 
                     isFCType, 
                     isILType, 
-                    ofuscated,
-                    log.ofuscated))
+                    obfuscated,
+                    log.obfuscated))
 }
 
 # ideas
 # evaluating the model's performance on different categories (resto categories IL, MB, FC)
 # flagging revenue outliers (different model to predict whether a data point is an outlier)
-# P1 - P37: as numeric, but get rid of 0 values ()
-# package mice for imputation of missing values

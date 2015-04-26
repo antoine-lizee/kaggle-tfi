@@ -7,10 +7,10 @@ rmse <- function(Y,Y.hat){
   return(error)
 }
 
-CV <- function(X, Y, model, error = rmse, K = 3) {
+CV <- function(X, Y, model, error = rmse, K = 10) {
   # performs a K-fold cross validation
   N <- nrow(X)
-  indexes <- sample(K, size = N, replace = T)
+  indexes <- sample(rep(1:10, size = 137))
   
   perf <- list()
   for (iFold in 1:K) {

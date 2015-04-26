@@ -9,6 +9,19 @@ modelSVM <- function(X.preproc, Y, ...) {
   svm(Y~., data.frame(X.preproc, Y), ...)
 }
 
+modelLM <- function(X.preproc, Y, ...) {
+  step(lm(Y~., data.frame(X.preproc, Y),...), trace = 0)
+}
+
+modelGLM <- function(X.preproc, Y, ...) {
+  step(glm(Y~., data.frame(X.preproc, Y), family = "poisson", ...), trace = 0)
+}
+
+modelRPART <- function(X.preproc, Y, ...) {
+  library(rpart)
+  rpart(Y~., data.frame(X.preproc, Y), ...)
+}
+
 modelGBM <- function(X.preproc, Y, ...) {
   library(gbm)
   gbm(Y~., data = data.frame(X.preproc, Y), ...)

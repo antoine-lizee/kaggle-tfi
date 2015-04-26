@@ -41,8 +41,8 @@ Ytrain <- train["revenue"]
 
 Xtest <- test
 
-XtrainProcessed <- preprocess(Xtrain)
-XtestProcessed <- preprocess(Xtest)
+XtrainProcessed <- preproc(Xtrain)
+XtestProcessed <- preproc(Xtest)
 
 model <- randomForest(XtrainProcessed, Ytrain[,1])
 result <- predict(model, XtestProcessed)

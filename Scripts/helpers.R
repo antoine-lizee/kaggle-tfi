@@ -7,10 +7,16 @@ rmse <- function(Y,Y.hat){
   return(error)
 }
 
+
+multipleCVs <- function(..., n = 5) { 
+  args <- as.list(substitute(list(...)))[-1L]
+  mean( replicate(expr = do.call(CV, args), n = n) )
+}
+
 CV <- function(X, Y, model, error = rmse, K = 10) {
   # performs a K-fold cross validation
   N <- nrow(X)
-  indexes <- sample(rep(1:10, size = 137))
+  indexes <- sample(rep(1:10, length.out = N))
   
   perf <- list()
   for (iFold in 1:K) {
@@ -22,7 +28,9 @@ CV <- function(X, Y, model, error = rmse, K = 10) {
     perf_i <- error(Ytest_i, Ypred_i)
     perf[[iFold]] <- perf_i
   }
-  print(paste0("Cross-validation result: ", mean(unlist(perf))))
+  perf <- mean(unlist(perf))
+#   print(paste0("Cross-validation result: ", perf))
+  return(perf)
 }
 
 countZerosPerRow <-function(Xtrain) {
@@ -36,3 +44,8 @@ writeSubmission <- function(Xtest, prediction, name){
   timeString <- gsub(Sys.time(), pattern = "\\s|:|PDT", replacement = "")
   write.csv(sub, paste0("Output/", name, "-", timeString, ".csv"), row.names = F)
 }
+
+
+
+
+

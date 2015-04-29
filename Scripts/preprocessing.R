@@ -3,26 +3,29 @@
 # Features ideas
 preproc <- function(X){
   library(mice)
+  obfuscated.cat.names <- paste0("P", c(5,6,7,8,11,15,22,24,33,37))
+  for (f in obfuscated.cat.names){
+    X[,f] <- as.factor(X[,f])
+  }
+  obfuscated.cat <- X[, colnames(X) %in% obfuscated.cat.names]
   X$Open.Date <- as.Date(X$Open.Date, format = "%m/%d/%Y")
   # Time since restaurant open
   age <- as.numeric(Sys.Date() - X$Open.Date, units = "days")
   isFCType <- factor(X$Type == "FC")
   isILType <- factor(X$Type == "IL")
-  obfuscated.names <- paste0("P", seq(1,37))
-  obfuscated <- X[, colnames(X) %in% obfuscated.names]
-  obfuscated[obfuscated == 0] <- NA
-  imp <- mice(obfuscated, seed = 2015, m = 1, maxit = 3, method = "mean")
-  obfuscated <- complete(imp)
-  log.obfuscated <- lapply(obfuscated, function(x) log(x+1))
+  obfuscated.num.names <- paste0("P", c(1:4,9,10,12:14,16:21,23,25:32,34:36))
+  obfuscated.num <- X[, colnames(X) %in% obfuscated.num.names]
+  obfuscated.num[obfuscated.num == 0] <- NA
+  imp <- mice(obfuscated.num, seed = 2015, m = 1, maxit = 3, method = "mean")
+  obfuscated.num <- complete(imp)
+  log.obfuscated.num <- lapply(obfuscated.num, function(x) log(x+1))
   city.group <- factor(X$City.Group)
+
   return(data.frame(age, 
                     city.group, 
                     isFCType, 
-                    isILType, 
-                    obfuscated,
-                    log.obfuscated))
+                    isILType,
+                    obfuscated.num,
+                    obfuscated.cat,
+                    log.obfuscated.num))
 }
-
-# ideas
-# evaluating the model's performance on different categories (resto categories IL, MB, FC)
-# flagging revenue outliers (different model to predict whether a data point is an outlier)

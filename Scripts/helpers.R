@@ -29,10 +29,15 @@ countZerosPerRow <-function(Xtrain) {
   apply(Xtrain, 1, function(x) sum(x == 0 || x == 0.0))
 }
 
-
-
 writeSubmission <- function(Xtest, prediction, name){
   sub <- data.frame(Id = Xtest[,"Id"], Prediction = prediction)
   timeString <- gsub(Sys.time(), pattern = "\\s|:|PDT", replacement = "")
   write.csv(sub, paste0("Output/", name, "-", timeString, ".csv"), row.names = F)
+}
+
+isCategorical <- function(Xtest, i) {
+  if(!all(is.integer(Xtest[, f]))) {F}
+  else if(min(Xtest[, f]) > 1){F}
+  else if(max(Xtest[, f])/length(unique(Xtest[, f])) >= 3/2){F}
+  else {T}
 }

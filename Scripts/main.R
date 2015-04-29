@@ -14,16 +14,14 @@ source("Scripts/models.R")
 # imports models
 
 kRecompute <- F
+ntrain <- 137
 
-if(!exists("Xtrain.preproc") || kRecompute) {
-  Xtrain.preproc <- preproc(Xtrain)
+X <- rbind(Xtrain, Xtest)
+if(!exists("X.preproc") || kRecompute) {
+  X.preproc <- preproc(X)
+  Xtrain.preproc <- X.preproc[c(1:ntrain), ]
+  Xtest.preproc <- X.preproc[-c(1:ntrain), ]
 }
-if(!exists("Xtest.preproc") || kRecompute) {
-  Xtest.preproc <- preproc(Xtest)
-}
-
-
-CV(Xtrain.preproc, Ytrain, getModel(modelRF, ntree = 500, mtry = 2))
 
 CV(Xtrain.preproc, Ytrain, getModel(modelRF, ntree = 500, mtry = 2))
 
@@ -36,7 +34,7 @@ CV(Xtrain.preproc, Ytrain, getModel(modelRPART))
 
 CV(Xtrain.preproc, Ytrain, getHybridModel(modelRF, modelSVM, cost = 2, ntree = 1000, mtry = 2))
 
-#writeSubmission(Xtest, getHybridModel(modelRF, modelSVM, cost = 2, ntree = 1000, mtry = 2)(preproc(Xtrain), Ytrain[,1], preproc(Xtest)), "HybridRFSVM-logpreproc")
+writeSubmission(Xtest, getHybridModel(modelRF, modelSVM, cost = 2, ntree = 1000, mtry = 2)(Xtrain.preproc, Ytrain[,1], Xtest.preproc), "HybridRFSVM-MICEmean")
 #writeSubmission(Xtest, getModel(modelGBM, distribution = "tdist", n.trees = 1000, interaction.depth = 1, shrinkage = 0.01)(Xtrain.preproc, Ytrain[,1], Xtest.preproc), "HybridGBM-logpreproc")
 
 #writeSubmission(Xtest, getModel(modelSVM, cost = 2)(Xtrain.preproc, Ytrain[,1], Xtest.preproc), "SVM-cost2")

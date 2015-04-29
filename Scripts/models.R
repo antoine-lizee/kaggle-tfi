@@ -1,7 +1,9 @@
 
 modelRF <- function(X.preproc, Y, ...) {
   library(randomForest)
-  randomForest(Y~., data.frame(X.preproc, Y), ...)
+  important <-  Boruta(X.preproc, Y)
+  X.select <- X.preproc[,-which(important$finalDecision != "Rejected")]
+  randomForest(Y~., data.frame(X.select, Y), ...)
 }
 
 modelSVM <- function(X.preproc, Y, ...) {

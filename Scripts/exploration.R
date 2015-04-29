@@ -47,6 +47,15 @@ XtestProcessed <- preproc(Xtest)
 model <- randomForest(XtrainProcessed, Ytrain[,1])
 result <- predict(model, XtestProcessed)
 
+for (i in 1:37){
+  f <- paste0("P",i)
+  print(f)
+  #hist(Xtest[, f], main = f, breaks = 30)
+  print(paste(isCategorical(Xtest, i), length(unique(Xtest[, f])), "unique values", all(is.integer(Xtest[, f])), any(Xtest[, f] == 0), max(Xtest[, f])))
+}
+
+is.categorical <- c(F,F,F,F,T,T,T,T,T,T,T,T,T)
+
 #model1 <- step(lm(revenue ~ ., data.frame(XtrainProcessed, Ytrain)), trace = 0)
 #result2 <- predict(model1, XtestProcessed)
 

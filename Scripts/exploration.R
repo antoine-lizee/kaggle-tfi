@@ -60,3 +60,56 @@ is.categorical <- c(F,F,F,F,T,T,T,T,T,T,T,T,T)
 #result2 <- predict(model1, XtestProcessed)
 
 writeSubmission(Xtest, result, "mySubmission")
+
+
+
+cbind(colnames(test), 1:ncol(test))
+samplingIndex <- sample(1:nrow(test), size = 10000)
+lapply(test[samplingIndex, 6:42], hist, 100)
+
+sapply(paste0("P", 1:37), function(index) {
+  print(qplot(x = train[,index], y = train[,"revenue"], 
+              geom = c("point", "smooth"), method = "lm") +
+          theme_bw() +
+          labs(title = index))
+})
+
+# Good features: 1,2,6,8,9,10,11,13,21,28,29,
+# Not great but without 0s: 19, 22, 23, 
+# Potentially good features with 0: 17, 30, 31, 
+
+gfs <- paste0("P", c(1,2,6,8,9,10,11,13,21,28,29, 17, 30, 31))
+
+
+## put (absolute) correlations on the upper panels,
+## with size proportional to the correlations.
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
+{
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  r <- abs(cor(x, y))
+  txt <- format(c(r, 0.123456789), digits = digits)[1]
+  txt <- paste0(prefix, txt)
+  if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+  text(0.5, 0.5, txt, cex = cex.cor * r)
+}
+## put histograms on the diagonal
+panel.hist <- function(x, ...)
+{
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(usr[1:2], 0, 1.5) )
+  h <- hist(x, plot = FALSE)
+  breaks <- h$breaks; nB <- length(breaks)
+  y <- h$counts; y <- y/max(y)
+  rect(breaks[-nB], 0, breaks[-1], y, col = "cyan", ...)
+}
+
+pairs(train[c(gfs[1:5], "revenue")]
+      , lower.panel = panel.smooth
+      , diag.panel = panel.hist 
+      , upper.panel = panel.cor
+      , pch = 20
+      )
+
+
+
